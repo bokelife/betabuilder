@@ -1,0 +1,15 @@
+{
+    "name": "betaos/betabuilder",
+    "description": "The Beta Builder Package For ThinkCMF 5.1",
+    "type": "library",
+    "require": {
+        "thinkcmf/cmf": "~5.1.0"
+    },
+    "license": "Apache-2.0",
+    "authors": [
+        {
+            "name": "johnny",
+            "email": "johnnycaimail@yeah.net"
+        }
+    ]
+}
