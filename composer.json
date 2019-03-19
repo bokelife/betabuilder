@@ -11,5 +11,10 @@
             "name": "johnny",
             "email": "johnnycaimail@yeah.net"
         }
-    ]
+    ],
+    "autoload": {
+        "psr-4": {
+            "betaos\\betabuilder\\": "src"
+        }
+    }
 }
