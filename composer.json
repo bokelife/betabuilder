@@ -14,7 +14,10 @@
     ],
     "autoload": {
         "psr-4": {
-            "betaos\\betabuilder\\": "src"
-        }
+            "app\\": "src"
+        },
+        "files": [
+            "src/common/common.php"
+        ]
     }
 }

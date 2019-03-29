@@ -1,0 +1,5 @@
+<select name="{$field.name}" id="{$field.id}" class="form-control" {$field.extra_attr|default=''}>
+    <foreach name="field.options" item="option" key="option_key">
+    <option value="{$option_key}" <present name="field.value"><eq name="field.value" value="$option_key"> selected</eq></present>>{$option}</option>
+    </foreach>
+</select>

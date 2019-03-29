@@ -1,0 +1,26 @@
+<style>
+    .remove-avatar{cursor: pointer;}
+    .img-avatar{width: 120px;height: 120px;}
+</style>
+<div class="upload-avatar-box popup-avatar img-thumbnail">
+    <i data-avatarid="{$field.name}" class="remove-avatar fa fa-times-circle remove-attachment" title="移除头像"></i>
+    <empty name="field.value">
+        <img class="img-avatar" src="__STATIC__/images/headicon.png" id="{$field.id}-preview">
+        <else />
+        <a href="{$field.value | cmf_get_image_url}" title="点击查看大图">
+            <img class="img-avatar" src="{$field.value | cmf_get_image_url}" id="{$field.id}-preview">
+        </a>
+    </empty>
+</div>
+<span class="btn btn-info ml-10 btn-sm" id="upload_avatar_{$field.id}"><i class="fa fa-upload"></i> 上传头像</span>
+<input class="attach" type="hidden" id="{$field.id}" name="{$field.name}" value="{$field.value|default=''}"/>
+<script>
+$("#upload_avatar_{$field.id}").click(function (e) {
+    uploadOneImage('图片上传','#{$field.id}');
+});
+$(".remove-avatar").click(function () {
+    var self = this;
+    $(self).parent().children('img').attr('src','__STATIC__/images/headicon.png');
+    $('#{$field.id}').val('');
+});
+</script>

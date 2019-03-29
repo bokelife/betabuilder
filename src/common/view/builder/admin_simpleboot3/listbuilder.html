@@ -1,0 +1,147 @@
+<include file="public@header" />
+<notempty name="top_html"><title>{$meta_title}</title></notempty>
+<style>
+    .fixed-table-pagination:after, .fixed-table-toolbar:after {content: "";display: block;clear: both;}
+</style>
+</head>
+<body>
+<div class="wrap js-check-wrap">
+<section class="content pt-5">
+      <div class="box box-solid eacoo-box">
+          <present name="show_box_header">
+              <eq name="show_box_header" value="1">
+                  <notempty name="tips">
+                      <div class="alert alert-{$tips_type} alert-dismissible" role="alert">
+                          <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                          {$tips|default=""}
+                      </div>
+                  </notempty>
+              </eq>
+          </present>
+          <!-- Tab导航 -->
+          <notempty name="tab_nav">
+              <ul class="nav nav-tabs">
+                  <volist name="tab_nav.tab_list" id="tab">
+                      <li class="<php>if($tab_nav['current'] == $key) echo 'active';</php>"><a href="{$tab.href}" {$tab.extra_attr|default=''}>{$tab.title}</a></li>
+                  </volist>
+              </ul>
+          </notempty>
+          <notempty name="top_html">
+              <div class="well">{$top_html}</div>
+          </notempty>
+          <div class="builder-box">
+              <div class="box-body">
+                  <notempty name="advanced_search">
+                      <if condition="$advanced_search.need_advanced_search eq 1">
+                          <form class="js-ajax-form" action="{$advanced_search.url}" method="post">
+                              <div class="panel panel-default">
+                                  <div class="panel-heading pull-right">
+                                      <h4 class="panel-title">
+                                          <a data-toggle="collapse" data-parent="#accordion" href="#collapse-advanced_search">
+                                              高级搜索
+                                          </a>
+                                      </h4>
+                                  </div>
+                                  <div id="collapse-advanced_search" class="panel-collapse collapse in">
+                                      <div class="panel-body">
+                                          <div class="form-inline" role="form">
+                                              <volist name="advanced_search.fields" id="field">
+                                                  <div class="form-group mt-10">
+                                                      {:action('common/Form/fieldType',['field'=>$field],'builder')}
+                                                  </div>
+                                              </volist>
+                                              <div class="form-group mt-10">
+                                                  <button type="submit" class="btn btn-success ajax-sumbit" id="search">查询</button>
+                                              </div>
+                                          </div>
+                                      </div>
+                                  </div>
+                              </div>
+                          </form>
+                      </if>
+                  </notempty>
+                  <div class="panel panel-default">
+                      <form class="js-ajax-form" action="" method="post">
+                          <div class="panel-heading fixed-table-toolbar">
+                              <!-- 顶部工具栏按钮 -->
+                              <notempty name="top_button_list">
+                                  <div class="pull-left btn-list">
+                                      <volist name="top_button_list" id="row">
+                                          <if condition="$row.type eq 'sumbit'">
+                                              <button {$row.attribute|default=""}><notempty name="row.icon"><i class="{$row.icon|default=''}"></i></notempty> {$row.title}</button>&nbsp;
+                                              <else/>
+                                              <a {$row.attribute|default=""}><notempty name="row.icon"><i class="{$row.icon|default=''}"></i></notempty> {$row.title}</a>&nbsp;
+                                          </if>
+
+                                      </volist>
+                                  </div>
+                              </notempty>
+                          </div>
+                          <!-- 数据列表 -->
+                          <div class="panel-body">
+                              <table class="table table-hover table-bordered table-list">
+                                  <thead>
+                                  <tr>
+                                      <th width="15">
+                                          <label>
+                                              <input type="checkbox" class="js-check-all" data-direction="x" data-checklist="js-check-x">
+                                          </label>
+                                      </th>
+                                      <volist name="table_columns" id="row">
+                                          <th data-field="{$row.name}" {$row.extra_attr|default=""} >{$row.title}</th>
+                                      </volist>
+                                  </tr>
+                                  </thead>
+                                  <tbody>
+                                  <volist name="data_list" id="item" >
+                                      <tr>
+                                          <td>
+                                              <input type="checkbox" class="js-check" data-yid="js-check-y" data-xid="js-check-x" name="ids[]"
+                                                     value="{$item[$table_primary_key]}" title="ID:">
+                                          </td>
+                                          <foreach name="table_columns" id="vo">
+                                              <td>{$item[$vo.name]}</td>
+                                          </foreach>
+                                      </tr>
+                                  </volist>
+                                  </tbody>
+                                  <tfoot>
+                                  <tr>
+                                      <th width="15">
+                                          <label>
+                                              <input type="checkbox" class="js-check-all" data-direction="x" data-checklist="js-check-x">
+                                          </label>
+                                      </th>
+                                      <volist name="table_columns" id="row">
+                                          <th>{$row.title}</th>
+                                      </volist>
+                                  </tr>
+                                  </tfoot>
+                              </table>
+                          </div>
+                          <!-- 工具栏按钮 -->
+                          <notempty name="top_button_list">
+                              <div class="panel-heading">
+                                  <volist name="top_button_list" id="row">
+                                      <a {$row.attribute|default=""}><notempty name="row.icon"><i class="{$row.icon|default=''}"></i></notempty> {$row.title}</a>&nbsp;
+                                  </volist>
+                              </div>
+                          </notempty>
+                      </form>
+                      <ul class="pagination">{$page|default=''}</ul>
+                      <!-- 额外功能代码 -->
+                      <div class="well">{$extra_html}</div>
+                  </div>
+              </div>
+          </div>
+        
+
+      </div>
+
+</section>
+</div>
+{$static_addon.static_file}
+<script type="text/javascript" src="__STATIC__/js/admin.js"></script>
+{$static_addon.script}
+</body>
+</html>

@@ -1,0 +1,27 @@
+<ul id="files" class="pic-list list-unstyled form-inline">
+    <notempty name="field.value">
+        <volist name="field.value" id="val" key="key">
+            <li id="saved-file{$key}">
+                <input id="file-{$key}" type="hidden" name="{$field.name}_urls[]" value="{$val[$field['name'].'_urls']|default=''}">
+                <input class="form-control" id="file-{$key}-name" type="text" name="{$field.name}" value="{$val[$field.name]|default=''}"
+                       style="width: 200px;" title="文件名称">
+                <a id="file-{$key}-preview" href="{$val[$field['name'].'_urls']|default=''|cmf_get_image_url}" target="_blank">下载</a>
+                <a href="javascript:uploadOne('文件上传','#file-{$key}','file');">替换</a>
+                <a href="javascript:(function(){$('#saved-file{$key}').remove();})();">移除</a>
+            </li>
+        </volist>
+    </notempty>
+</ul>
+
+<a href="javascript:uploadMultiFile('附件上传','#files','{$field.id}-item-tpl','file');"
+   class="btn btn-info ml-10 btn-sm"><i class="fa fa-file"></i> 选择文件</a>
+<script type="text/html" id="{$field.id}-item-tpl">
+    <li id="saved-file{id}">
+        <input id="file-{id}" type="hidden" name="{$field.name}_urls[]" value="{filepath}">
+        <input class="form-control" id="file-{id}-name" type="text" name="{$field.name}" value="{name}"
+               style="width: 200px;" title="文件名称">
+        <a id="file-{id}-preview" href="{preview_url}" target="_blank">下载</a>
+        <a href="javascript:uploadOne('文件上传','#file-{id}','file');">替换</a>
+        <a href="javascript:(function(){$('#saved-file{id}').remove();})();">移除</a>
+    </li>
+</script>

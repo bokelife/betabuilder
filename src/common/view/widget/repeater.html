@@ -1,0 +1,95 @@
+<div class="repeatable repeatable_{$id}" >
+    <table class="table table-bordered " >
+        <thead style="background-color: #f0f0f0;">
+        <tr>
+            <volist name="options.0" id="option">
+            <th <eq name="option.type" value="image">style="width: 100px;text-align: center;" </eq> >{$option.title}</th>
+            </volist>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody data-repeater-list="{$name}" id="repeatable_tbody_{$id}">
+        <volist name="options" id="new_option"  key="count">
+        <tr data-repeater-item id="repeater-tr-{$count}">
+            <php>if(is_array($new_option)){</php>
+            <foreach name="new_option" item="row" key="key">
+            <td>
+                <switch name="row.type">
+                <case value="info">{$row.value|default=''}</case>
+                <case value="select">
+                <select name="[{$key}]" class="form-control select-sm" {$row.extra_attr|default=""}>
+                    <foreach name="row.options" item="option" key="option_key">
+                    <option value="{$option_key}" >{$option}</option>
+                    </foreach>
+                </select>
+                </case>
+                <case value="image">
+                    <div class="repeater-img-field-{$id}-{$key}_{$count}" style="min-height: 90px;">
+                        <input type="hidden" name="[{$key}]" id="repeater-input-{$id}-{$key}_{$count}" value="{$row.default|default=''}">
+                        <a href="javascript:uploadOneImage('图片上传','#repeater-input-{$id}-{$key}_{$count}');">
+                            <img src="{$row.default|cmf_get_image_url=###,'medium'|default='__TMPL__/public/assets/images/default-thumbnail.png'}"
+                                 id="repeater-input-{$id}-{$key}_{$count}-preview" width="90" style="cursor: pointer"/>
+                        </a>
+                    </div>
+                </case>
+                <default/>
+                <php>
+                $field=$row;
+                $field['name'] = '['.$key.']';
+                $field['value'] = isset($row['default']) ? $row['default'] : '';
+                $field['extra_attr'] = isset($row['placeholder']) ? $row['placeholder'] : '';
+                </php>
+                {:action('common/Form/fieldType',['field'=>$field],'builder')}
+                </switch>
+            </td>
+            </foreach>
+            <php>}</php>
+            <td><label data-repeater-delete class="label label-danger btn-sm" style="cursor: pointer;"><i class="fa fa-trash"></i></label></td>
+        </tr>
+        </volist>
+
+        </tbody>
+    </table>
+    <button type="button" data-repeater-create class="btn btn-success btn-sm repeater-add-{$id} fr mr-10" ><i class="fa fa-plus"></i> 添加</button>
+</div>
+
+
+<if condition="$param['is_load_script'] neq 1">
+    <script type="text/javascript">{$_js_}</script>
+</if>
+<script type="text/javascript">
+    loadRepeaterWidget();
+    function loadRepeaterWidget(argument) {
+        $(document).ready(function () {
+            $('.repeatable_{$id}').repeater({
+                show: function () {
+                    var last_tr = $("#repeatable_tbody_{$id} tr:last");
+                    var last_prev = last_tr.prev();
+                    var last_tr_id = last_tr.attr('id');
+                    var last_prev_id = last_prev.attr('id');
+                    var previndex = parseInt(last_prev_id.replace('repeater-tr-',''));
+                    var lastindex = previndex+1;
+                    last_tr.attr('id','repeater-tr-'+lastindex);
+                    if(last_tr.children().find('img')){
+                        var img = last_tr.children().find('img');
+                        img.attr('src','__TMPL__/public/assets/images/default-thumbnail.png');
+                        var id =img.attr('id');
+                        var idtext =id.substring(0,id.lastIndexOf('_'));
+                        img.attr('id',idtext+'_'+lastindex+'-preview');
+                        last_tr.children().find('input').attr('id',idtext+'_'+lastindex);
+                        last_tr.children().find('a').attr('href','javascript:uploadOneImage(\'图片上传\',\'#'+idtext+'_'+lastindex+'\');');
+                    }
+                    $(this).slideDown();
+                },
+                hide: function (deleteElement) {
+                    if(confirm('您确定要删除吗?')) {
+                        $(this).slideUp(deleteElement);
+                    }
+                },
+                ready: function (setIndexes) {
+
+                }
+            });
+        });
+    }
+</script>

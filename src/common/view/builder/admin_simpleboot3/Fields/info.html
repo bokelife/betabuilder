@@ -1,0 +1,11 @@
+<style>
+	.callout.callout-warning{background-color: #f39c12 !important;border-color: #c87f0a;}
+	.col-md-offset-2 {margin-left: 16.666666667%!important;}
+	.callout {border-radius: 3px;margin: 0 0 20px 0;padding: 15px 30px 15px 15px;border-left: 5px solid #eee;color:#fff;}
+</style>
+<div class=" form-group item_{$field.name} {$field.extra_class|default=''}">
+	<div class="col-md-6 col-md-offset-2 callout callout-warning ">
+		<h5><i class="fa fa-bullhorn"></i> {$field.title|default=''}</h5>
+		<notempty name="field.description"><p>{$field.description}</p></notempty>
+	</div>
+</div>
