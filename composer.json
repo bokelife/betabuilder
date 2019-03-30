@@ -17,7 +17,7 @@
             "app\\": "src"
         },
         "files": [
-            "src/common/common.php"
+            "src/common/functions.php"
         ]
     }
 }
