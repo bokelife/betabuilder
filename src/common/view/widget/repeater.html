@@ -3,49 +3,49 @@
         <thead style="background-color: #f0f0f0;">
         <tr>
             <volist name="options.0" id="option">
-            <th <eq name="option.type" value="image">style="width: 100px;text-align: center;" </eq> >{$option.title}</th>
+                <th <eq name="option.type" value="image">style="width: 100px;text-align: center;" </eq> >{$option.title}</th>
             </volist>
             <th>操作</th>
         </tr>
         </thead>
         <tbody data-repeater-list="{$name}" id="repeatable_tbody_{$id}">
         <volist name="options" id="new_option"  key="count">
-        <tr data-repeater-item id="repeater-tr-{$count}">
-            <php>if(is_array($new_option)){</php>
-            <foreach name="new_option" item="row" key="key">
-            <td>
-                <switch name="row.type">
-                <case value="info">{$row.value|default=''}</case>
-                <case value="select">
-                <select name="[{$key}]" class="form-control select-sm" {$row.extra_attr|default=""}>
-                    <foreach name="row.options" item="option" key="option_key">
-                    <option value="{$option_key}" >{$option}</option>
-                    </foreach>
-                </select>
-                </case>
-                <case value="image">
-                    <div class="repeater-img-field-{$id}-{$key}_{$count}" style="min-height: 90px;">
-                        <input type="hidden" name="[{$key}]" id="repeater-input-{$id}-{$key}_{$count}" value="{$row.default|default=''}">
-                        <a href="javascript:uploadOneImage('图片上传','#repeater-input-{$id}-{$key}_{$count}');">
-                            <img src="{$row.default|cmf_get_image_url=###,'medium'|default='__TMPL__/public/assets/images/default-thumbnail.png'}"
-                                 id="repeater-input-{$id}-{$key}_{$count}-preview" width="90" style="cursor: pointer"/>
-                        </a>
-                    </div>
-                </case>
-                <default/>
-                <php>
-                $field=$row;
-                $field['name'] = '['.$key.']';
-                $field['value'] = isset($row['default']) ? $row['default'] : '';
-                $field['extra_attr'] = isset($row['placeholder']) ? $row['placeholder'] : '';
-                </php>
-                {:action('common/Form/fieldType',['field'=>$field],'builder')}
-                </switch>
-            </td>
-            </foreach>
-            <php>}</php>
-            <td><label data-repeater-delete class="label label-danger btn-sm" style="cursor: pointer;"><i class="fa fa-trash"></i></label></td>
-        </tr>
+            <tr data-repeater-item id="repeater-tr-{$count}">
+                <php>if(is_array($new_option)){</php>
+                <foreach name="new_option" item="row" key="key">
+                    <td>
+                        <switch name="row.type">
+                            <case value="info">{$row.value|default=''}</case>
+                            <case value="select">
+                                <select name="[{$key}]" class="form-control select-sm" {$row.extra_attr|default=""}>
+                                    <foreach name="row.options" item="option" key="option_key">
+                                        <option value="{$option_key}" >{$option}</option>
+                                    </foreach>
+                                </select>
+                            </case>
+                            <case value="image">
+                                <div class="repeater-img-field-{$id}-{$key}_{$count}" style="min-height: 90px;">
+                                    <input type="hidden" name="[{$key}]" id="repeater-input-{$id}-{$key}_{$count}" value="{$row.default|default=''}">
+                                    <a href="javascript:uploadOneImage('图片上传','#repeater-input-{$id}-{$key}_{$count}');">
+                                        <img src="{$row.default|cmf_get_image_url=###,'medium'|default='__TMPL__/public/assets/images/default-thumbnail.png'}"
+                                             id="repeater-input-{$id}-{$key}_{$count}-preview" width="90" style="cursor: pointer"/>
+                                    </a>
+                                </div>
+                            </case>
+                            <default/>
+                            <php>
+                                $field=$row;
+                                $field['name'] = '['.$key.']';
+                                $field['value'] = isset($row['default']) ? $row['default'] : '';
+                                $field['extra_attr'] = isset($row['placeholder']) ? $row['placeholder'] : '';
+                            </php>
+                            {:action('common/Form/fieldType',['field'=>$field],'builder')}
+                        </switch>
+                    </td>
+                </foreach>
+                <php>}</php>
+                <td><label data-repeater-delete class="label label-danger btn-sm" style="cursor: pointer;"><i class="fa fa-trash"></i></label></td>
+            </tr>
         </volist>
 
         </tbody>
@@ -70,14 +70,20 @@
                     var previndex = parseInt(last_prev_id.replace('repeater-tr-',''));
                     var lastindex = previndex+1;
                     last_tr.attr('id','repeater-tr-'+lastindex);
-                    if(last_tr.children().find('img')){
-                        var img = last_tr.children().find('img');
-                        img.attr('src','__TMPL__/public/assets/images/default-thumbnail.png');
-                        var id =img.attr('id');
-                        var idtext =id.substring(0,id.lastIndexOf('_'));
-                        img.attr('id',idtext+'_'+lastindex+'-preview');
-                        last_tr.children().find('input').attr('id',idtext+'_'+lastindex);
-                        last_tr.children().find('a').attr('href','javascript:uploadOneImage(\'图片上传\',\'#'+idtext+'_'+lastindex+'\');');
+                    var img = last_tr.children().find('img');
+                    if(img.length>0){
+                        for (var i=0;i<img.length;i++){
+                            var subimg = img[i];
+                            $(subimg).attr('src','__TMPL__/public/assets/images/default-thumbnail.png');
+                            var id =$(subimg).attr('id');
+                            var idtext =id.substring(0,id.lastIndexOf('_'));
+                            var newimgid = idtext+'_'+lastindex+'-preview';
+                            $(subimg).attr('id',newimgid);
+                            var input = last_tr.children().find('input');
+                            $(input[i]).attr('id',idtext+'_'+lastindex);
+                            var a = last_tr.children().find('a');
+                            $(a[i]).attr('href','javascript:uploadOneImage(\'图片上传\',\'#'+idtext+'_'+lastindex+'\');');
+                        }
                     }
                     $(this).slideDown();
                 },
