@@ -130,7 +130,9 @@
                       </form>
                       <ul class="pagination">{$page|default=''}</ul>
                       <!-- 额外功能代码 -->
+                      <notempty name="extra_html">
                       <div class="well">{$extra_html}</div>
+                      </notempty>
                   </div>
               </div>
           </div>
