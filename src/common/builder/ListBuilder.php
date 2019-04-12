@@ -36,15 +36,15 @@ class ListBuilder extends Builder{
      * 添加高级搜索功能
      * @param string $param 参数按照下面示例
      * $advancedSearch = [
-                            'fields' => [
-                                            ['name'=>'status','type'=>'select','title'=>'状态','options'=>[1=>'正常',2=>'待审核']],
-                                            ['name'=>'create_time_range','type'=>'daterange','extra_attr'=>'placeholder="创建时间范围"'],
-                                            ['name'=>'keyword','type'=>'text','extra_attr'=>'placeholder="请输入查询关键字"'],
-                                        ],
-                            'title' => '查询',
-                            'url' => cmf_url('Demo/AdminIndex/lists'),
-                        
-                        ];
+    'fields' => [
+    ['name'=>'status','type'=>'select','title'=>'状态','options'=>[1=>'正常',2=>'待审核']],
+    ['name'=>'create_time_range','type'=>'daterange','extra_attr'=>'placeholder="创建时间范围"'],
+    ['name'=>'keyword','type'=>'text','extra_attr'=>'placeholder="请输入查询关键字"'],
+    ],
+    'title' => '查询',
+    'url' => cmf_url('Demo/AdminIndex/lists'),
+
+    ];
      * @return $this
      * @author Johnny <johnnycaimail@yeah.net>
      */
@@ -60,7 +60,7 @@ class ListBuilder extends Builder{
         $this->advanced_search = $param;
         return $this;
     }
-    
+
     /**
      * 设置Tab按钮列表
      * @param $tab_list Tab列表  array(
@@ -83,7 +83,7 @@ class ListBuilder extends Builder{
      * 加一个表格字段
      * @param $name  列字段
      * @param $title 列显示文字
-     * @param null $type 列的类型：status、bool、label、byte、icon、date、datetime、time、image、images、url、array、switch、callback
+     * @param null $type 列的类型：status、bool、label、byte、icon、date、datetime、time、image、images、url、array、switch、text、number、callback
      * @param null $param 类型的附加参数
      * @param null $extra_attr 表头th标签的自定义扩展
      * @return $this
@@ -177,48 +177,56 @@ class ListBuilder extends Builder{
                 $my_attribute['title'] = '添加';
                 $my_attribute['icon'] = 'fa fa-plus';
                 $my_attribute['class'] = 'btn btn-primary btn-sm';
-                $my_attribute['href'] = $this->pluginName ? parent::plugin_url('edit') : url($this->request->module() . '/' . $this->request->controller() . '/edit');
-
+                $my_attribute['href'] = $this->pluginName ? parent::plugin_url('edit') :
+                    url($this->request->module() . '/' . $this->request->controller() . '/'.(!empty($attribute['action'])?$attribute['action']:'add'));
                 break;
             case 'resume':  // 添加启用按钮(禁用的反操作)
                 //预定义按钮属性以简化使用
                 $my_attribute['type'] = 'sumbit';
                 $my_attribute['title'] = '启用';
+                $my_attribute['target-form'] = 'ids';
                 $my_attribute['icon'] = 'fa fa-play';
                 $my_attribute['class'] = 'btn btn-success btn-sm js-ajax-submit';
                 $my_attribute['data-subcheck'] = 'true';
                 $my_attribute['confirm-info'] = '您确定要执行启用操作吗？';
-                $my_attribute['data-action'] = $this->pluginName ? parent::plugin_url('setStatus', ['status' => 'resume']) : url($this->request->module() . '/' . $this->request->controller() . '/setStatus', ['op' => 'resume','field' => $field_name,'keyfield' => $this->tablePrimaryKey,'model'=>$model_name]);
+                $my_attribute['data-action'] = $this->pluginName ? parent::plugin_url('setStatus', ['status' => 'resume']) :
+                    url($this->request->module() . '/' . $this->request->controller() . '/'.(!empty($attribute['action'])?$attribute['action']:'resumes'), ['op' => 'resume','field' => $field_name,'keyfield' => $this->tablePrimaryKey,'model'=>$model_name]);
                 break;
             case 'forbid':  // 添加禁用按钮(启用的反操作)
                 // 预定义按钮属性以简化使用
                 $my_attribute['type'] = 'sumbit';
                 $my_attribute['title'] = '禁用';
+                $my_attribute['target-form'] = 'ids';
                 $my_attribute['icon'] = 'fa fa-pause';
                 $my_attribute['class'] = 'btn btn-warning btn-sm js-ajax-submit';
                 $my_attribute['data-subcheck'] = 'true';
                 $my_attribute['data-msg'] = '您确定要执行禁用操作吗？';
-                $my_attribute['data-action'] = $this->pluginName ? parent::plugin_url('setStatus', ['status' => 'forbid']) : url($this->request->module() . '/' . $this->request->controller() . '/setStatus', ['op' => 'forbid','field' => $field_name,'keyfield' => $this->tablePrimaryKey,'model'=>$model_name]);
+                $my_attribute['data-action'] = $this->pluginName ? parent::plugin_url('setStatus', ['status' => 'forbid']) :
+                    url($this->request->module() . '/' . $this->request->controller() . '/'.(!empty($attribute['action'])?$attribute['action']:'forbids'), ['op' => 'forbid','field' => $field_name,'keyfield' => $this->tablePrimaryKey,'model'=>$model_name]);
                 break;
             case 'recycle':  // 添加回收按钮(还原的反操作)
                 // 预定义按钮属性以简化使用
                 $my_attribute['type'] = 'sumbit';
                 $my_attribute['title'] = '回收';
+                $my_attribute['target-form'] = 'ids';
                 $my_attribute['icon'] = 'fa fa-recycle';
                 $my_attribute['class'] = 'btn btn-danger btn-sm js-ajax-submit';
                 $my_attribute['data-subcheck'] = 'true';
                 $my_attribute['data-msg'] = '您确定要执行回收操作吗？';
-                $my_attribute['data-action'] = $this->pluginName ? parent::plugin_url('setStatus', ['status' => 'recycle']) : url($this->request->module() . '/' . $this->request->controller() . '/setStatus', ['op' => 'recycle','field' => $field_name,'keyfield' => $this->tablePrimaryKey,'model'=>$model_name]);
+                $my_attribute['data-action'] = $this->pluginName ? parent::plugin_url('setStatus', ['status' => 'recycle']) :
+                    url($this->request->module() . '/' . $this->request->controller() . '/'.(!empty($attribute['action'])?$attribute['action']:'recycles'), ['op' => 'recycle','field' => $field_name,'keyfield' => $this->tablePrimaryKey,'model'=>$model_name]);
                 break;
             case 'restore':  // 添加还原按钮(回收的反操作)
                 // 预定义按钮属性以简化使用
                 $my_attribute['type'] = 'sumbit';
                 $my_attribute['title'] = '还原';
+                $my_attribute['target-form'] = 'ids';
                 $my_attribute['icon'] = 'fa fa-window-restore';
                 $my_attribute['class'] = 'btn btn-success btn-sm js-ajax-submit';
                 $my_attribute['data-subcheck'] = 'true';
                 $my_attribute['data-msg'] = '您确定要执行还原操作吗？';
-                $my_attribute['data-action'] = $this->pluginName ? parent::plugin_url('setStatus', ['status' => 'restore']) : url($this->request->module() . '/' . $this->request->controller() . '/setStatus', ['op' => 'restore','field' => $field_name,'keyfield' => $this->tablePrimaryKey,'model'=>$model_name]);
+                $my_attribute['data-action'] = $this->pluginName ? parent::plugin_url('setStatus', ['status' => 'restore']) :
+                    url($this->request->module() . '/' . $this->request->controller() . '/'.(!empty($attribute['action'])?$attribute['action']:'restores'), ['op' => 'restore','field' => $field_name,'keyfield' => $this->tablePrimaryKey,'model'=>$model_name]);
                 break;
             case 'delete': // 添加删除按钮(我没有反操作，删除了就没有了，就真的找不回来了)
                 // 预定义按钮属性以简化使用
@@ -226,10 +234,10 @@ class ListBuilder extends Builder{
                 $my_attribute['title'] = '删除';
                 $my_attribute['target-form'] = 'ids';
                 $my_attribute['icon'] = 'fa fa-remove';
-                $my_attribute['class'] = 'btn btn-danger js-ajax-dialog-btn btn-sm';
+                $my_attribute['class'] = 'btn btn-danger js-ajax-submit btn-sm';
                 $my_attribute['data-msg'] = '您确定要执行删除操作吗？';
                 $my_attribute['data-action'] = $this->pluginName ? parent::plugin_url('setStatus', ['status' => 'delete']) : url(
-                    $this->request->module() . '/' . $this->request->controller() . '/setStatus',
+                    $this->request->module() . '/' . $this->request->controller() . '/'.(!empty($attribute['action'])?$attribute['action']:'deletes'),
                     array(
                         'op' => 'delete',
                         'field' => $field_name,
@@ -240,13 +248,15 @@ class ListBuilder extends Builder{
                 break;
             case 'sort':  // 添加排序按钮
                 // 预定义按钮属性以简化使用
-                $my_attribute['type'] = 'a';
+                $my_attribute['type'] = 'sumbit';
                 $my_attribute['title'] = '排序';
+                $my_attribute['target-form'] = 'ids';
                 $my_attribute['icon'] = 'fa fa-sort';
                 $my_attribute['name'] = '排序';
-                $my_attribute['class'] = 'btn btn-info btn-sm';
-                $my_attribute['href'] = $this->pluginName ? parent::plugin_url('sort') : url($this->request->module() . '/' . $this->request->controller() . '/sort');
-
+                $my_attribute['class'] = 'btn btn-info btn-sm js-ajax-submit';
+                $my_attribute['data-msg'] = '您确定要执行排序操作吗？';
+                $my_attribute['data-action'] = $this->pluginName ? parent::plugin_url('sort') :
+                    url($this->request->module() . '/' . $this->request->controller() . '/'.(!empty($attribute['action'])?$attribute['action']:'sort'));
                 break;
             case 'self': //添加自定义按钮(第一原则使用上面预设的按钮，如果有特殊需求不能满足则使用此自定义按钮方法)
                 // 预定义按钮属性以简化使用
@@ -300,7 +310,8 @@ class ListBuilder extends Builder{
                 $my_attribute['title'] = '编辑';
                 $my_attribute['icon'] = 'fa fa-edit';
                 $my_attribute['class'] = $this->rightButtonType==1 ? 'btn btn-primary btn-xs':'';
-                $my_attribute['href']  =  $this->pluginName ? parent::plugin_url('edit',[$this->tablePrimaryKey => '__data_id__']) : url($this->request->module().'/'.$this->request->controller().'/edit',[$this->tablePrimaryKey => '__data_id__']);
+                $my_attribute['href']  =  $this->pluginName ? parent::plugin_url((!empty($attribute['action'])?$attribute['action']:'edit'),[$this->tablePrimaryKey => '__data_id__']) :
+                    url($this->request->module().'/'.$this->request->controller().'/'.(!empty($attribute['action'])?$attribute['action']:'edit'),[$this->tablePrimaryKey => '__data_id__']);
 
                 break;
             case 'forbid':  // 改变记录状态按钮，会更具数据当前的状态自动选择应该显示启用/禁用
@@ -310,28 +321,28 @@ class ListBuilder extends Builder{
                 $my_attribute['0']['class'] = $this->rightButtonType==1 ? 'btn btn-success btn-xs js-ajax-dialog-btn':'ajax-get confirm';
                 $my_attribute['0']['data-msg'] = $this->rightButtonType==1 ? '您确定要启用吗？':'ajax-get confirm';
                 $my_attribute['0']['href']  = $this->pluginName ? parent::plugin_url('setStatus',['op' => 'resume','field' => $status_field,'ids' => '__data_id__']) : cmf_url(
-                        $this->request->module().'/'.$this->request->controller().'/setStatus',
-                        array(
-                            'op' => 'resume',
-                            'field' => $status_field,
-                            'keyfield' => $this->tablePrimaryKey,
-                            'model' => $model_name,
-                            'ids' => '__data_id__',
-                        )
-                    );
+                    $this->request->module().'/'.$this->request->controller().'/'.(!empty($attribute['action'])?$attribute['action']:'resume'),
+                    array(
+                        'op' => 'resume',
+                        'field' => $status_field,
+                        'keyfield' => $this->tablePrimaryKey,
+                        'model' => $model_name,
+                        'ids' => '__data_id__',
+                    )
+                );
                 $my_attribute['1']['title'] = !empty($attribute['1']['title']) ? $attribute['1']['title'] : '禁用';
                 $my_attribute['1']['class'] = $this->rightButtonType==1 ? 'btn btn-warning btn-xs js-ajax-dialog-btn':'ajax-get confirm';
                 $my_attribute['1']['data-msg'] = $this->rightButtonType==1 ? '您确定要禁用吗？':'ajax-get confirm';
                 $my_attribute['1']['href']  = $this->pluginName ? parent::plugin_url('setStatus',['op' => 'forbid','field' => $status_field,'ids' => '__data_id__']) : cmf_url(
-                        $this->request->module().'/'.$this->request->controller().'/setStatus',
-                        array(
-                            'field' => 'forbid',
-                            'field' => $status_field,
-                            'keyfield' => $this->tablePrimaryKey,
-                            'model' => $model_name,
-                            'ids' => '__data_id__',
-                        )
-                    );
+                    $this->request->module().'/'.$this->request->controller().'/'.(!empty($attribute['action'])?$attribute['action']:'disable'),
+                    array(
+                        'op' => 'forbid',
+                        'field' => $status_field,
+                        'keyfield' => $this->tablePrimaryKey,
+                        'model' => $model_name,
+                        'ids' => '__data_id__',
+                    )
+                );
 
                 break;
             case 'hide':  // 改变记录状态按钮，会更具数据当前的状态自动选择应该显示隐藏/显示
@@ -341,28 +352,28 @@ class ListBuilder extends Builder{
                 $my_attribute['2']['class'] = $this->rightButtonType==1 ? 'btn btn-success btn-xs js-ajax-dialog-btn':'ajax-get confirm';
                 $my_attribute['2']['data-msg'] = $this->rightButtonType==1 ? '您确定要显示吗？':'ajax-get confirm';
                 $my_attribute['2']['href']  = $this->pluginName ? parent::plugin_url('setStatus',['op' => 'show','field' => $status_field,'ids' => '__data_id__']) : cmf_url(
-                        $this->request->module().'/'.$this->request->controller().'/setStatus',
-                        array(
-                            'op' => 'show',
-                            'field' => $status_field,
-                            'keyfield' => $this->tablePrimaryKey,
-                            'model' => $model_name,
-                            'ids' => '__data_id__',
-                        )
-                    );
+                    $this->request->module().'/'.$this->request->controller().'/'.(!empty($attribute['action'])?$attribute['action']:'show'),
+                    array(
+                        'op' => 'show',
+                        'field' => $status_field,
+                        'keyfield' => $this->tablePrimaryKey,
+                        'model' => $model_name,
+                        'ids' => '__data_id__',
+                    )
+                );
                 $my_attribute['1']['title'] = '隐藏';
                 $my_attribute['1']['class'] = $this->rightButtonType==1 ? 'btn btn-info btn-xs js-ajax-dialog-btn':'ajax-get confirm';
                 $my_attribute['1']['data-msg'] = $this->rightButtonType==1 ? '您确定要隐藏吗？':'ajax-get confirm';
                 $my_attribute['1']['href']  = $this->pluginName ? parent::plugin_url('setStatus',['op' => 'show','field' => $status_field,'ids' => '__data_id__']) : url(
-                        $this->request->module().'/'.$this->request->controller().'/setStatus',
-                        array(
-                            'op' => 'hide',
-                            'field' => $status_field,
-                            'keyfield' => $this->tablePrimaryKey,
-                            'model' => $model_name,
-                            'ids' => '__data_id__',
-                        )
-                    );
+                    $this->request->module().'/'.$this->request->controller().'/'.(!empty($attribute['action'])?$attribute['action']:'hide'),
+                    array(
+                        'op' => 'hide',
+                        'field' => $status_field,
+                        'keyfield' => $this->tablePrimaryKey,
+                        'model' => $model_name,
+                        'ids' => '__data_id__',
+                    )
+                );
 
                 break;
             case 'recycle':
@@ -372,7 +383,7 @@ class ListBuilder extends Builder{
                 $my_attribute['class'] = $this->rightButtonType==1 ? 'btn btn-danger btn-xs js-ajax-dialog-btn':'ajax-get confirm';
                 $my_attribute['data-msg'] = $this->rightButtonType==1 ? '您确定要回收吗？':'ajax-get confirm';
                 $my_attribute['href'] = $this->pluginName ? parent::plugin_url('setStatus',['op'=>'recycle','field' => $status_field,'ids' => '__data_id__']) :  url(
-                    $this->request->module().'/'.$this->request->controller().'/setStatus',
+                    $this->request->module().'/'.$this->request->controller().'/'.(!empty($attribute['action'])?$attribute['action']:'recycle'),
                     array(
                         'op' => 'recycle',
                         'field' => $status_field,
@@ -388,9 +399,9 @@ class ListBuilder extends Builder{
                 $my_attribute['class'] = $this->rightButtonType==1 ? 'btn btn-success btn-xs js-ajax-dialog-btn':'ajax-get confirm';
                 $my_attribute['data-msg'] = $this->rightButtonType==1 ? '您确定要还原吗？':'ajax-get confirm';
                 $my_attribute['href'] = $this->pluginName ? parent::plugin_url('setStatus',['op'=>'restore','field' => $status_field,'ids' => '__data_id__']) :  url(
-                    $this->request->module().'/'.$this->request->controller().'/setStatus',
+                    $this->request->module().'/'.$this->request->controller().'/'.(!empty($attribute['action'])?$attribute['action']:'restore'),
                     array(
-                        'status' => 'restore',
+                        'op' => 'restore',
                         'field' => $status_field,
                         'keyfield' => $this->tablePrimaryKey,
                         'model' => $model_name,
@@ -405,9 +416,9 @@ class ListBuilder extends Builder{
                 $my_attribute['class'] = $this->rightButtonType==1 ? 'btn btn-danger btn-xs js-ajax-delete':'ajax-get confirm';
                 $my_attribute['confirm-info'] = '您确定要执行删除操作吗？';
                 $my_attribute['href'] = $this->pluginName ? parent::plugin_url('setStatus',['op'=>'delete','field' => $status_field,'ids' => '__data_id__']) :  url(
-                    $this->request->module().'/'.$this->request->controller().'/setStatus',
+                    $this->request->module().'/'.$this->request->controller().'/'.(!empty($attribute['action'])?$attribute['action']:'delete'),
                     array(
-                        'status' => 'delete',
+                        'op' => 'delete',
                         'field' => $status_field,
                         'keyfield' => $this->tablePrimaryKey,
                         'model' => $model_name,
@@ -636,9 +647,10 @@ class ListBuilder extends Builder{
                     if ($right_button['type'] === 'forbid' || $right_button['type'] === 'hide'){
                         if(!empty($data['status'])){
                             $right_button = $right_button[$data['status']];
-                        }
-                        if(isset($data[$right_button['field']])){
-                            $right_button = $right_button[$data[$right_button['field']]];
+                        }else{
+                            if(isset($data[$right_button['field']])){
+                                $right_button = $right_button[$data[$right_button['field']]];
+                            }
                         }
                     }
                 }
@@ -814,6 +826,36 @@ class ListBuilder extends Builder{
                             $data[$column['name']] = '<input type="checkbox" class="switch" data-size="mini" checked readonly />';
                             break;
                     }
+                    break;
+                case 'text':
+                    $textname = $textid = $extra_attr = '';
+                    if (!empty($column['param']['name'])) {
+                        $textname = $column['param']['name'];
+                    }else{
+                        $textname = $column['name'].'[]';
+                    }
+                    if (!empty($column['extra_attr'])) {
+                        $extra_attr = $column['extra_attr'];
+                    }
+                    $textid = 'row_text'.str_replace(']','',str_replace('[','_',$textname)).'_'.$data[$this->tablePrimaryKey];
+                    $textval = $data[$column['name']];
+                    $texthTML = '<input type="text" class="form-control input-xm" name="'.$textname.'" id="'.$textid.'" value="'.$textval.'" '.$extra_attr.'>';
+                    $data[$column['name']] = $texthTML;
+                    break;
+                case 'number':
+                    $textname = $textid = $extra_attr = '';
+                    if (!empty($column['param']['name'])) {
+                        $textname = $column['param']['name'];
+                    }else{
+                        $textname = $column['name'].'[]';
+                    }
+                    if (!empty($column['extra_attr'])) {
+                        $extra_attr = $column['extra_attr'];
+                    }
+                    $textid = 'row_text'.str_replace(']','',str_replace('[','_',$textname)).'_'.$data[$this->tablePrimaryKey];
+                    $textval = $data[$column['name']];
+                    $texthTML = '<input type="number" class="form-control input-xm" name="'.$textname.'" id="'.$textid.'" value="'.$textval.'" '.$extra_attr.'>';
+                    $data[$column['name']] = $texthTML;
                     break;
                 case 'callback': // 调用函数
                     if (is_array($column['param'])) {
