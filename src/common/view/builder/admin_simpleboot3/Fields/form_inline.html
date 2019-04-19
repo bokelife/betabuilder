@@ -1,0 +1,18 @@
+<div class="form-group item_{$field.name|default=''} {$field.extra_class|default=''}">
+    <label for="{$field.type}-{$field.name|default=''}" class="col-md-2 control-label">
+        <php>$is_required=strstr($field['extra_attr'],'required');</php>
+        <neq name="is_required" value="0">
+            <span class="form-required">*</span></neq>{$field.title|default=""}</label>
+    <div class="{$field.extra.field_body_class|default='col-md-4'} form-inline" {$field.extra.field_body_extra|default=''}>
+        <volist name="field.options" id="field" key="group_k">
+            {:action('common/Form/fieldType',['field'=>$field],'builder')}
+        </volist>
+    </div>
+    <notempty name="field.description">
+        <div class="{$field.extra.field_help_block_class|default='col-md-5'} help-block">
+            <label for="{$field.type}-{$field.name|default=''}">
+                <i class="fa fa-info-circle color-info1"></i> {$field.description|default=""}
+            </label>
+        </div>
+    </notempty>
+</div>

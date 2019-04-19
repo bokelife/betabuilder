@@ -305,10 +305,21 @@ class ListBuilder extends Builder{
         $query_model_params = $this->preQueryConnector.'model='.$model_name;
         $status_field = isset($attribute['field']) ? $attribute['field'] : 'status';
         switch ($type) {
+            case 'view':  // 编辑按钮
+                // 预定义按钮属性以简化使用
+                $my_attribute['title'] = isset($attribute['title']) ? $attribute['title'] : '查看';
+                $my_attribute['icon'] = 'fa fa-eye';
+                $my_attribute['class'] = $this->rightButtonType==1 ? 'btn btn-info btn-xs':'';
+                $my_attribute['tips'] = isset($attribute['tips']) ? $attribute['tips'] : '查看';
+                $my_attribute['href']  =  $this->pluginName ? parent::plugin_url((!empty($attribute['action'])?$attribute['action']:'view'),[$this->tablePrimaryKey => '__data_id__']) :
+                    url($this->request->module().'/'.$this->request->controller().'/'.(!empty($attribute['action'])?$attribute['action']:'view'),[$this->tablePrimaryKey => '__data_id__']);
+
+                break;
             case 'edit':  // 编辑按钮
                 // 预定义按钮属性以简化使用
-                $my_attribute['title'] = '编辑';
+                $my_attribute['title'] = isset($attribute['title']) ? $attribute['title'] : '编辑';
                 $my_attribute['icon'] = 'fa fa-edit';
+                $my_attribute['tips'] = isset($attribute['tips']) ? $attribute['tips'] : '编辑';
                 $my_attribute['class'] = $this->rightButtonType==1 ? 'btn btn-primary btn-xs':'';
                 $my_attribute['href']  =  $this->pluginName ? parent::plugin_url((!empty($attribute['action'])?$attribute['action']:'edit'),[$this->tablePrimaryKey => '__data_id__']) :
                     url($this->request->module().'/'.$this->request->controller().'/'.(!empty($attribute['action'])?$attribute['action']:'edit'),[$this->tablePrimaryKey => '__data_id__']);
@@ -320,6 +331,7 @@ class ListBuilder extends Builder{
                 $my_attribute['0']['title'] = !empty($attribute['0']['title']) ? $attribute['0']['title'] : '启用';
                 $my_attribute['0']['class'] = $this->rightButtonType==1 ? 'btn btn-success btn-xs js-ajax-dialog-btn':'ajax-get confirm';
                 $my_attribute['0']['data-msg'] = $this->rightButtonType==1 ? '您确定要启用吗？':'ajax-get confirm';
+                $my_attribute['0']['tips'] = !empty($attribute['0']['tips']) ? $attribute['0']['tips'] : '启用';
                 $my_attribute['0']['href']  = $this->pluginName ? parent::plugin_url('setStatus',['op' => 'resume','field' => $status_field,'ids' => '__data_id__']) : cmf_url(
                     $this->request->module().'/'.$this->request->controller().'/'.(!empty($attribute['action'])?$attribute['action']:'resume'),
                     array(
@@ -333,6 +345,7 @@ class ListBuilder extends Builder{
                 $my_attribute['1']['title'] = !empty($attribute['1']['title']) ? $attribute['1']['title'] : '禁用';
                 $my_attribute['1']['class'] = $this->rightButtonType==1 ? 'btn btn-warning btn-xs js-ajax-dialog-btn':'ajax-get confirm';
                 $my_attribute['1']['data-msg'] = $this->rightButtonType==1 ? '您确定要禁用吗？':'ajax-get confirm';
+                $my_attribute['1']['tips'] = !empty($attribute['1']['tips']) ? $attribute['1']['tips'] : '禁用';
                 $my_attribute['1']['href']  = $this->pluginName ? parent::plugin_url('setStatus',['op' => 'forbid','field' => $status_field,'ids' => '__data_id__']) : cmf_url(
                     $this->request->module().'/'.$this->request->controller().'/'.(!empty($attribute['action'])?$attribute['action']:'disable'),
                     array(
@@ -343,15 +356,17 @@ class ListBuilder extends Builder{
                         'ids' => '__data_id__',
                     )
                 );
+                $my_attribute['field'] = $status_field;
 
                 break;
             case 'hide':  // 改变记录状态按钮，会更具数据当前的状态自动选择应该显示隐藏/显示
                 // 预定义按钮属
                 $my_attribute['type'] = 'hide';
-                $my_attribute['2']['title'] = '显示';
-                $my_attribute['2']['class'] = $this->rightButtonType==1 ? 'btn btn-success btn-xs js-ajax-dialog-btn':'ajax-get confirm';
-                $my_attribute['2']['data-msg'] = $this->rightButtonType==1 ? '您确定要显示吗？':'ajax-get confirm';
-                $my_attribute['2']['href']  = $this->pluginName ? parent::plugin_url('setStatus',['op' => 'show','field' => $status_field,'ids' => '__data_id__']) : cmf_url(
+                $my_attribute['0']['title'] = !empty($attribute['0']['title']) ? $attribute['0']['title'] : '显示';
+                $my_attribute['0']['tips'] = !empty($attribute['0']['tips']) ? $attribute['0']['tips'] : '显示';
+                $my_attribute['0']['class'] = $this->rightButtonType==1 ? 'btn btn-success btn-xs js-ajax-dialog-btn':'ajax-get confirm';
+                $my_attribute['0']['data-msg'] = $this->rightButtonType==1 ? '您确定要显示吗？':'ajax-get confirm';
+                $my_attribute['0']['href']  = $this->pluginName ? parent::plugin_url('setStatus',['op' => 'show','field' => $status_field,'ids' => '__data_id__']) : cmf_url(
                     $this->request->module().'/'.$this->request->controller().'/'.(!empty($attribute['action'])?$attribute['action']:'show'),
                     array(
                         'op' => 'show',
@@ -361,7 +376,8 @@ class ListBuilder extends Builder{
                         'ids' => '__data_id__',
                     )
                 );
-                $my_attribute['1']['title'] = '隐藏';
+                $my_attribute['1']['title'] = !empty($attribute['1']['title']) ? $attribute['1']['title'] : '隐藏';
+                $my_attribute['1']['tips'] = !empty($attribute['1']['tips']) ? $attribute['1']['tips'] : '隐藏';
                 $my_attribute['1']['class'] = $this->rightButtonType==1 ? 'btn btn-info btn-xs js-ajax-dialog-btn':'ajax-get confirm';
                 $my_attribute['1']['data-msg'] = $this->rightButtonType==1 ? '您确定要隐藏吗？':'ajax-get confirm';
                 $my_attribute['1']['href']  = $this->pluginName ? parent::plugin_url('setStatus',['op' => 'show','field' => $status_field,'ids' => '__data_id__']) : url(
@@ -374,11 +390,13 @@ class ListBuilder extends Builder{
                         'ids' => '__data_id__',
                     )
                 );
+                $my_attribute['field'] = $status_field;
 
                 break;
             case 'recycle':
                 // 预定义按钮属性以简化使用
-                $my_attribute['title'] = '回收';
+                $my_attribute['title'] = isset($attribute['title']) ? $attribute['title'] : '回收';
+                $my_attribute['tips'] = isset($attribute['tips']) ? $attribute['tips'] : '回收';
                 $my_attribute['icon'] = 'fa fa-recycle';
                 $my_attribute['class'] = $this->rightButtonType==1 ? 'btn btn-danger btn-xs js-ajax-dialog-btn':'ajax-get confirm';
                 $my_attribute['data-msg'] = $this->rightButtonType==1 ? '您确定要回收吗？':'ajax-get confirm';
@@ -395,7 +413,8 @@ class ListBuilder extends Builder{
                 break;
             case 'restore':
                 // 预定义按钮属性以简化使用
-                $my_attribute['title'] = '还原';
+                $my_attribute['title'] = isset($attribute['title']) ? $attribute['title'] : '还原';
+                $my_attribute['tips'] = isset($attribute['tips']) ? $attribute['tips'] : '还原';
                 $my_attribute['class'] = $this->rightButtonType==1 ? 'btn btn-success btn-xs js-ajax-dialog-btn':'ajax-get confirm';
                 $my_attribute['data-msg'] = $this->rightButtonType==1 ? '您确定要还原吗？':'ajax-get confirm';
                 $my_attribute['href'] = $this->pluginName ? parent::plugin_url('setStatus',['op'=>'restore','field' => $status_field,'ids' => '__data_id__']) :  url(
@@ -411,7 +430,8 @@ class ListBuilder extends Builder{
                 break;
             case 'delete':
                 // 预定义按钮属性以简化使用
-                $my_attribute['title'] = '删除';
+                $my_attribute['title'] = isset($attribute['title']) ? $attribute['title'] : '删除';
+                $my_attribute['tips'] = isset($attribute['tips']) ? $attribute['tips'] : '删除';
                 $my_attribute['icon'] = 'fa fa-remove';
                 $my_attribute['class'] = $this->rightButtonType==1 ? 'btn btn-danger btn-xs js-ajax-delete':'ajax-get confirm';
                 $my_attribute['confirm-info'] = '您确定要执行删除操作吗？';
@@ -663,6 +683,7 @@ class ListBuilder extends Builder{
                 );
 
                 $right_button_show_title = $right_button['title'];
+                $right_button['title'] = $right_button['tips'];
                 if(isset($right_button['icon'])) $right_button_show_title = '<i class="'.$right_button['icon'].'"></i> ';
                 // 编译按钮属性
                 $right_button['attribute'] = $this->compileHtmlAttr($right_button);

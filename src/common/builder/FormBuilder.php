@@ -28,9 +28,9 @@ class FormBuilder extends Builder{
     private $formData   = [];   // 表单数据
     private $ajaxSubmit = true;    // 是否ajax提交
     protected $fieldsItemsList = ['text','avatar','checkbox','color','date','daterange','datetime','email','file',
-        'files','group','hidden','image','images','info','left_icon_number','left_icon_text','multilayer_select','number',
+        'files','form_inline','group','hidden','image','images','img','info','left_icon_number','left_icon_text','multilayer_select','number',
         'password','radio','readonly','right_icon_number','right_icon_text','section','select','select2','select_multiple',
-        'tab','textarea','self','self_html','url','ueditor','icon','repeater'];
+        'tab','textarea','self','self_html','static','url','ueditor','icon','repeater'];
     protected $staticFiles = [
         'daterange' => [
             'daterangepicker-bs3.min.css' => 'https://cdn.bootcss.com/bootstrap-daterangepicker/1.3.21/daterangepicker-bs3.min.css',
@@ -289,7 +289,7 @@ class FormBuilder extends Builder{
         //编译表单值
         if ($this->formData) {
             foreach ($this->formItems as &$item) {
-                if (!in_array($item['type'],['group','section','self_html','tab'])) {
+                if (!in_array($item['type'],['group','section','self_html','tab','form_inline'])) {
                     if ($item['name']!='') {
                         if (isset($this->formData[$item['name']])) {
                             $item['value'] = $this->formData[$item['name']];
@@ -369,6 +369,18 @@ class FormBuilder extends Builder{
                                 $item['options'][$tab_field_key]['options'][$tab_option_key]=$this->setSpecialItemData($tab_option_val);
                             }
                         }
+                    }
+                }
+            }
+        }
+        if($item['type']=='form_inline'){
+            foreach ($item['options'] as $gkey => $gvalue) {
+                if (!in_array($gvalue['type'],['group','section','self_html','tab','form_inline'])){
+                    $gitemvalue = $_formData[$gvalue['name']];
+                    $item['options'][$gkey]['value'] = $gitemvalue;
+                } else{
+                    if(isset($gvalue['options'])){
+                        $item['options'][$gkey]=$this->setSpecialItemData($gvalue);
                     }
                 }
             }

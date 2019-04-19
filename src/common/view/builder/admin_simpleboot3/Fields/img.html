@@ -1,0 +1,11 @@
+<if condition="empty($field['value'])">
+    <img src="__TMPL__/public/assets/images/default-thumbnail.png"
+         id="js-{$field.id}-input-preview"
+         width="135" style="cursor: pointer"/>
+    <else/>
+    <a href="javascript:parent.imagePreviewDialog('{$field['value']}');">
+    <img src="{:cmf_get_image_preview_url($field['value'])}"
+         id="js-{$field.id}-preview"
+         {$field.extra_attr|default='width="135" style="cursor: pointer"'}/>
+    </a>
+</if>

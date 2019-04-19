@@ -15,6 +15,8 @@ use cmf\controller\AdminBaseController;
 
 class Builder extends AdminBaseController {
 
+    const VERSION = '1.0.7';
+
     protected $metaTitle; // 页面标题
     protected $tips;      // 页面提示
     protected $tipsType;      // 页面提示类型
