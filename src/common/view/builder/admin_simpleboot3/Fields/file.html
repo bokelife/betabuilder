@@ -1,7 +1,10 @@
+<php>
+    $filetype = isset($field['options']['filetype'])?$field['options']['filetype']:'file';
+</php>
 <div class="input-group">
     <input class="attach form-control" type="text" id="{$field.id}" name="{$field.name}" value="{$field.value|default=''}" />
     <span class="input-group-btn">
-        <button type="button" id="upload_file_{$field.id}" class="btn btn-info" onclick="javascript:uploadOne('文件上传','#{$field.id}','file');">
+        <button type="button" id="upload_file_{$field.id}" class="btn btn-info" onclick="javascript:uploadOne('文件上传','#{$field.id}','{$filetype}');">
             <i class="fa fa-upload"></i> 选择文件</button>
     </span>
 </div>

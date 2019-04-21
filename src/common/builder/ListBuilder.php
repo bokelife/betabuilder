@@ -55,7 +55,7 @@ class ListBuilder extends Builder{
         }else{
             $param['need_advanced_search'] = 1;
             $param['title'] = empty($param['title']) ? $param['title'] : '查询';
-            $param['url'] = empty($param['url']) ? $param['url'] : url($this->request->module() . '/' . $this->request->controller() . '/' . $this->request->action());
+            $param['url'] = !empty($param['url']) ? $param['url'] : url($this->request->module() . '/' . $this->request->controller() . '/' . $this->request->action());
         }
         $this->advanced_search = $param;
         return $this;

@@ -14,18 +14,27 @@
                     <volist name="tab.options" id="tabfield" key="tab_k">
                         <php>if(!in_array($tabfield['type'],['group','section','self_html','tab']) && !isset($tabfield['FormBuilderExtend'])){</php>
                         <div class="form-group item_{$tabfield.name|default=''} {$tabfield.extra_class|default=''}">
-                            <label for="{$tabfield.type}_{$tabfield.name|default=''}" class="col-md-2 control-label">
+                            <php>
+                                $tabfield_type = $tabfield['type'];
+                                $tabfieldid = '';
+                                if (strpos($tabfield['name'],'[')) {
+                                $tabfieldid = $tabfield_type.'_'.str_replace(']','',str_replace('[','_',$tabfield['name']));
+                                }else{
+                                $tabfieldid = $tabfield_type.'_'.$tabfield['name'];
+                                }
+                            </php>
+                            <label for="{$tabfieldid}" class="col-md-2 control-label">
                                 <notempty name="tabfield.extra_attr">
-                                <php>$is_required=strstr($tabfield['extra_attr'],'required');</php>
-                                <neq name="is_required" value="0">
-                                    <span class="form-required">*</span></neq></notempty>
+                                    <php>$is_required=strstr($tabfield['extra_attr'],'required');</php>
+                                    <neq name="is_required" value="0">
+                                        <span class="form-required">*</span></neq></notempty>
                                 {$tabfield.title|default=""}</label>
                             <div class="{$tabfield.extra.field_body_class|default='col-md-4'}" {$tabfield.extra.field_body_extra|default=''}>
                                 {:action('common/Form/fieldType',['field'=>$tabfield],'builder')}
                             </div>
                             <notempty name="tabfield.description">
                                 <div class="{$tabfield.extra.field_help_block_class|default='col-md-5'} help-block">
-                                    <label for="{$tabfield.type}_{$tabfield.name|default=''}">
+                                    <label for="{$tabfieldid}">
                                         <i class="fa fa-info-circle color-info1"></i> {$tabfield.description|default=""}
                                     </label>
                                 </div>

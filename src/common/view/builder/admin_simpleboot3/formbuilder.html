@@ -37,7 +37,7 @@
                     <volist name="fieldList" id="field" key="k">
                         <php>if(!in_array($field['type'],['group','section','self_html','tab','info','form_inline']) && !isset($field['FormBuilderExtend'])){</php>
                         <div class="form-group item_{$field.name|default=''} {$field.extra_class|default=''}">
-                            <label for="{$field.type}-{$field.name|default=''}" class="col-md-2 control-label">
+                            <label for="{$field.id}" class="col-md-2 control-label">
                                 <php>$is_required=strstr($field['extra_attr'],'required');</php>
                                 <neq name="is_required" value="0">
                                     <span class="form-required">*</span></neq>{$field.title|default=""}</label>
@@ -46,7 +46,7 @@
                             </div>
                             <notempty name="field.description">
                                 <div class="{$field.extra.field_help_block_class|default='col-md-5'} help-block">
-                                    <label for="{$field.type}-{$field.name|default=''}">
+                                    <label for="{$field.id}">
                                         <i class="fa fa-info-circle color-info1"></i> {$field.description|default=""}
                                     </label>
                                 </div>

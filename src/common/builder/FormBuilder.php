@@ -27,7 +27,7 @@ class FormBuilder extends Builder{
     private $extraItems = []; // 额外已经构造好的表单项目
     private $formData   = [];   // 表单数据
     private $ajaxSubmit = true;    // 是否ajax提交
-    protected $fieldsItemsList = ['text','avatar','checkbox','color','date','daterange','datetime','email','file',
+    protected $fieldsItemsList = ['audio_play','video_play','text','avatar','checkbox','color','date','daterange','datetime','editor','email','file',
         'files','form_inline','group','hidden','image','images','img','info','left_icon_number','left_icon_text','multilayer_select','number',
         'password','radio','readonly','right_icon_number','right_icon_text','section','select','select2','select_multiple',
         'tab','textarea','self','self_html','static','url','ueditor','icon','repeater'];
@@ -148,9 +148,9 @@ class FormBuilder extends Builder{
     public function addFormItem($name, $type, $title, $description = '', $options = [], $extra_attr = '', $extra_class = '') {
         $id = '';
         if (strpos($name,'[')) {
-            $id = $type.'-'.str_replace(']','',str_replace('[','-',$name));
+            $id = $type.'_'.str_replace(']','',str_replace('[','_',$name));
         }else{
-            $id = $type.'-'.$name;
+            $id = $type.'_'.$name;
         }
         $item = [
             'id'          => $id,
@@ -178,6 +178,9 @@ class FormBuilder extends Builder{
             $select2 = $this->staticFiles['select2'];
             $staticFiles = parent::getRemoteLibs('select2',$select2);
             $item['staticFiles'] = $staticFiles;
+        }
+        if($type=='editor'){
+            $item['havehook'] = '';
         }
 
         $this->formItems[] = $item;
@@ -291,9 +294,22 @@ class FormBuilder extends Builder{
             foreach ($this->formItems as &$item) {
                 if (!in_array($item['type'],['group','section','self_html','tab','form_inline'])) {
                     if ($item['name']!='') {
-                        if (isset($this->formData[$item['name']])) {
-                            $item['value'] = $this->formData[$item['name']];
+                        if ($item['type']=='editor'){
+                            $value = isset($this->formData[$item['name']]) ? $this->formData[$item['name']] : '';
+                            $content = hook_one('editor',['value'=>$value,'name'=>$item['name'],'id'=>$item['id'],$item['options']]);
+                            if(!empty($content)){
+                                $item['value'] = $content;
+                                $item['havehook'] = 'editor';
+                            }else{
+                                $item['value'] = $value;
+                                $item['havehook'] = '';
+                            }
+                        }else{
+                            if (isset($this->formData[$item['name']])) {
+                                $item['value'] = $this->formData[$item['name']];
+                            }
                         }
+
                     }
                 } else{
                     $item=$this->setSpecialItemData($item);
@@ -347,7 +363,7 @@ class FormBuilder extends Builder{
         if($item['type']=='group'){
             foreach ($item['options'] as $gkey => $gvalue) {
                 if (!in_array($gvalue['type'],['group','section','self_html','tab'])){
-                    $gitemvalue = $_formData[$gvalue['name']];
+                    $gitemvalue = isset($_formData[$gvalue['name']])?$_formData[$gvalue['name']]:'';
                     $item['options'][$gkey]['value'] = $gitemvalue;
                 } else{
                     if(isset($gvalue['options'])){
@@ -431,6 +447,7 @@ class FormBuilder extends Builder{
                     ];
                     break;
                 case 'ueditor':
+                case 'editor':
                     $item['extra']=[
                         'field_body_class'=>'col-md-10',
                         'field_help_block_class'=>'col-md-6 col-md-offset-2',
@@ -471,9 +488,9 @@ class FormBuilder extends Builder{
 
         $id = '';
         if (strpos($field['name'],'[')) {
-            $id = $field_type.'-'.str_replace(']','',str_replace('[','-',$field['name']));
+            $id = $field_type.'_'.str_replace(']','',str_replace('[','_',$field['name']));
         }else{
-            $id = $field_type.'-'.$field['name'];
+            $id = $field_type.'_'.$field['name'];
         }
         $field['id'] = $id;
 
